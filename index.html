@@ -88,7 +88,6 @@
             box-shadow: 0 0 25px var(--secondary);
         }
 
-        /* The Surprise Overlay */
         #surprise-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -116,13 +115,13 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Slideshow */
         #slideshow-section {
             display: none;
             width: 90%;
             max-width: 600px;
             margin: 50px auto;
             text-align: center;
+            padding-bottom: 50px;
         }
 
         .slide-frame {
@@ -130,6 +129,7 @@
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            background: #000;
         }
 
         .slide-frame img {
@@ -171,15 +171,16 @@
     <div class="slide-frame">
         <img id="main-slide" src="photo1.jpg">
     </div>
-    <p id="slide-caption" style="margin-top: 15px; font-style: italic; color: var(--primary);"></p>
+    <p id="slide-caption" style="margin-top: 15px; font-style: italic; color: var(--primary); min-height: 24px;"></p>
     <div style="margin-top: 20px;">
-        <button class="btn-gift" onclick="moveSlide(-1)" style="padding: 10px 25px;">❮</button>
-        <button class="btn-gift" onclick="moveSlide(1)" style="padding: 10px 25px;">❯</button>
+        <button class="btn-gift" onclick="manualMove(-1)" style="padding: 10px 25px;">❮</button>
+        <button class="btn-gift" onclick="manualMove(1)" style="padding: 10px 25px;">❯</button>
     </div>
+    <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0.6;">(Auto-playing every 4 seconds)</p>
 </section>
 
 <script>
-    // 1. Updated Typewriter Text
+    // 1. Typewriter
     const textToType = "I searched for the perfect gift... but nothing is better than this 😌";
     let index = 0;
     function type() {
@@ -191,30 +192,51 @@
     }
     window.onload = type;
 
-    // 2. Surprise Sequence
+    // 2. Surprise
     function triggerSurprise() {
         document.getElementById('surprise-overlay').style.display = 'flex';
         spawnConfetti();
     }
 
+    let slideInterval;
     function startSlideshow() {
         document.getElementById('surprise-overlay').style.display = 'none';
         document.getElementById('intro-card').style.display = 'none';
         const section = document.getElementById('slideshow-section');
         section.style.display = 'block';
+        updateSlide(); // Initialize first slide
         section.scrollIntoView({ behavior: 'smooth' });
-        runAutoSlide();
+        
+        // Start auto-slide
+        slideInterval = setInterval(() => moveSlide(1), 4000);
     }
 
-    // 3. Slideshow Core
-    const photos = ["photo1.jpg", "photo2.jpg", "photo3.jpg"]; // Update these!
-    const quotes = ["One for the books! 📸", "Best times with the best person.", "To more adventures! 🥂"];
+    // 3. Slideshow Core (6 Photos)
+    const photos = [
+        "photo1.jpg", 
+        "photo2.jpg", 
+        "photo3.jpg", 
+        "photo4.jpg", 
+        "photo5.jpg", 
+        "photo6.jpg"
+    ]; 
+    
+    const quotes = [
+        "One for the books! 📸", 
+        "Best times with the best person.", 
+        "To more adventures! 🥂",
+        "That one day we'll never forget... ✨",
+        "Always causing trouble together! 😈",
+        "Here's to many more years of us! 💜"
+    ];
+
     let slideIdx = 0;
 
     function updateSlide() {
         const img = document.getElementById('main-slide');
         const cap = document.getElementById('slide-caption');
         img.style.opacity = 0;
+        
         setTimeout(() => {
             img.src = photos[slideIdx];
             cap.innerText = quotes[slideIdx] || "";
@@ -227,17 +249,21 @@
         updateSlide();
     }
 
-    function runAutoSlide() {
-        setInterval(() => moveSlide(1), 4500);
+    // Reset timer if user clicks manually
+    function manualMove(n) {
+        clearInterval(slideInterval);
+        moveSlide(n);
+        slideInterval = setInterval(() => moveSlide(1), 4000);
     }
 
-    // 4. Confetti Effect
+    // 4. Confetti
     function spawnConfetti() {
         const colors = ['#a29bfe', '#fd79a8', '#fab1a0', '#55efc4'];
-        for(let i=0; i<80; i++) {
+        const shapes = ['💜', '✨', '🎈', '🌸'];
+        for(let i=0; i<100; i++) {
             const c = document.createElement('div');
             c.className = 'confetti';
-            c.innerHTML = '💜';
+            c.innerHTML = shapes[Math.floor(Math.random()*shapes.length)];
             c.style.left = Math.random() * 100 + 'vw';
             c.style.top = '-20px';
             c.style.color = colors[Math.floor(Math.random()*colors.length)];
