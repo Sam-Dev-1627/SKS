@@ -176,11 +176,10 @@
         <button class="btn-gift" onclick="manualMove(-1)" style="padding: 10px 25px;">❮</button>
         <button class="btn-gift" onclick="manualMove(1)" style="padding: 10px 25px;">❯</button>
     </div>
-    <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0.6;">(Auto-playing every 4 seconds)</p>
 </section>
 
 <script>
-    // 1. Typewriter
+    // 1. Typewriter Logic
     const textToType = "I searched for the perfect gift... but nothing is better than this 😌";
     let index = 0;
     function type() {
@@ -192,7 +191,7 @@
     }
     window.onload = type;
 
-    // 2. Surprise
+    // 2. Surprise Reveal
     function triggerSurprise() {
         document.getElementById('surprise-overlay').style.display = 'flex';
         spawnConfetti();
@@ -204,14 +203,14 @@
         document.getElementById('intro-card').style.display = 'none';
         const section = document.getElementById('slideshow-section');
         section.style.display = 'block';
-        updateSlide(); // Initialize first slide
+        updateSlide();
         section.scrollIntoView({ behavior: 'smooth' });
         
-        // Start auto-slide
+        // Auto-play every 4 seconds
         slideInterval = setInterval(() => moveSlide(1), 4000);
     }
 
-    // 3. Slideshow Core (6 Photos)
+    // 3. Slideshow Core (6 Unique Items)
     const photos = [
         "photo1.jpg", 
         "photo2.jpg", 
@@ -223,11 +222,11 @@
     
     const quotes = [
         "One for the books! 📸", 
-        "Best times with the best person.", 
+        "Best times with the best person. ✨", 
         "To more adventures! 🥂",
-        "That one day we'll never forget... ✨",
+        "That one day we'll never forget... 💜",
         "Always causing trouble together! 😈",
-        "Here's to many more years of us! 💜"
+        "Here's to many more years of us! 🌸"
     ];
 
     let slideIdx = 0;
@@ -235,11 +234,14 @@
     function updateSlide() {
         const img = document.getElementById('main-slide');
         const cap = document.getElementById('slide-caption');
+        
+        // Fade out
         img.style.opacity = 0;
         
         setTimeout(() => {
             img.src = photos[slideIdx];
             cap.innerText = quotes[slideIdx] || "";
+            // Fade in
             img.style.opacity = 1;
         }, 300);
     }
@@ -249,17 +251,16 @@
         updateSlide();
     }
 
-    // Reset timer if user clicks manually
     function manualMove(n) {
-        clearInterval(slideInterval);
+        clearInterval(slideInterval); // Stop auto-play so it doesn't skip
         moveSlide(n);
-        slideInterval = setInterval(() => moveSlide(1), 4000);
+        slideInterval = setInterval(() => moveSlide(1), 4000); // Restart auto-play
     }
 
-    // 4. Confetti
+    // 4. Confetti Animation
     function spawnConfetti() {
         const colors = ['#a29bfe', '#fd79a8', '#fab1a0', '#55efc4'];
-        const shapes = ['💜', '✨', '🎈', '🌸'];
+        const shapes = ['💜', '✨', '🎈', '🎉'];
         for(let i=0; i<100; i++) {
             const c = document.createElement('div');
             c.className = 'confetti';
@@ -270,9 +271,11 @@
             c.style.fontSize = Math.random() * 20 + 15 + 'px';
             c.style.transition = `transform ${Math.random()*3+2}s linear`;
             document.body.appendChild(c);
+            
             setTimeout(() => {
                 c.style.transform = `translateY(110vh) rotate(${Math.random()*360}deg)`;
             }, 50);
+            
             setTimeout(() => c.remove(), 5000);
         }
     }
